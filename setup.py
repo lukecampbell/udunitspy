@@ -41,14 +41,29 @@ class egg_install(bdist_egg):
         self.run_command('build_ext')
         bdist_egg.run(self)
 
+include_dirs = [
+        '/usr/include',
+        '/usr/local/include',
+        ]
+if 'C_INCLUDE_PATH' in os.environ:
+    include_dirs = os.environ['C_INCLUDE_PATH'].split(':') + include_dirs
+
+lib_dirs = [
+        '/lib',
+        '/usr/lib',
+        '/usr/local/lib',
+        ]
+if 'LD_LIBRARY_PATH' in os.environ:
+    lib_dirs = os.environ['LD_LIBRARY_PATH'].split(':') + lib_dirs
+
 
 cmdclass = {'build': ext_build, 'bdist_egg':egg_install}
 
 udunits_module = Extension('_udunits2_c',
     sources=['udunitspy/udunits2_c.i'],
-    swig_opts=['-c++', '-I/usr/local/include/'],
-    include_dirs=['/usr/local/include/'],
-    library_dirs=['/usr/local/lib/'],
+    swig_opts=['-c++'] + ['-I%s' % i for i in include_dirs],
+    include_dirs=include_dirs,
+    library_dirs=lib_dirs,
     libraries=['udunits2'])
 
 xml_dir = 'etc/udunits'
@@ -63,7 +78,7 @@ Topic :: Scientific/Engineering
 Topic :: Education
 Topic :: Software Development :: Libraries :: Python Modules'''
 setup(name='udunitspy',
-    version='0.0.3',
+    version='0.0.5',
     description='Python wrapper for UDUNITS2',
     long_description=open('DESC.txt').read(),
     license='LICENSE.txt',
