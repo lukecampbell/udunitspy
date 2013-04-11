@@ -31,7 +31,6 @@ except:
 from distutils.command.build import build as build_
 
 import os
-
 # Custom build ordering ensuring that build_ext occurs BEFORE build_py - otherwise, the swig compiled udunits2_c.py is not included
 class ext_build(build_):
     sub_commands = [('build_ext', build_.has_ext_modules)] + build_.sub_commands
@@ -64,7 +63,7 @@ udunits_module = Extension('_udunits2_c',
     swig_opts=['-c++'] + ['-I%s' % i for i in include_dirs],
     include_dirs=include_dirs,
     library_dirs=lib_dirs,
-    libraries=['udunits2'])
+    libraries=['udunits2','expat'])
 
 xml_dir = 'etc/udunits'
 xml_files = [os.path.join(xml_dir, f) for f in os.listdir(xml_dir)]
@@ -78,7 +77,7 @@ Topic :: Scientific/Engineering
 Topic :: Education
 Topic :: Software Development :: Libraries :: Python Modules'''
 setup(name='udunitspy',
-    version='0.0.5',
+    version='0.0.6',
     description='Python wrapper for UDUNITS2',
     long_description=open('DESC.txt').read(),
     license='LICENSE.txt',
